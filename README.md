@@ -9,7 +9,7 @@ $ yarn install
 ## Start
 
 ```bash
-# Create env.local file and copy the contents of env.example\
+# Create env.local file and copy the contents of env.example
 $ yarn start
 ```
 
