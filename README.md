@@ -6,7 +6,7 @@ run yarn install
 
 ## Start
 
-Create env.local file and copy the contents of env.example
+Create env.local file and copy the contents of env.example\
 run yarn start
 
 Runs the app in the development mode.\
