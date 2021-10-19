@@ -52,10 +52,12 @@ export const Dashboard: FC = () => {
 
   const handleDateFromChange = (date: Date | null) => {
     setDateFrom(date);
+    setPage(1);
   };
 
   const handleDateToChange = (date: Date | null) => {
     setDateTo(date);
+    setPage(1);
   };
 
   return (
