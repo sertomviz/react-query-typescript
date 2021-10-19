@@ -5,8 +5,7 @@ import { ArticleCategory } from '../models';
 import { useQuery } from 'react-query';
 import { fetchArticles, fetchCategories } from '../api/calls';
 import { NavBar } from './NavBar';
-import { Pagination } from './Pagination';
-import { Progress } from './ui';
+import { Pagination, Error, Progress } from './ui';
 import { MAX_PAGES } from '../utils/constants';
 
 export const Dashboard: FC = () => {
@@ -30,11 +29,12 @@ export const Dashboard: FC = () => {
     return useQuery<ArticleCategory[], Error>('categories', fetchCategories);
   };
 
-  const { data: categories, isLoading: categoryLoading, isError: categoryLoadingError } = useCategories();
-  const { data: articlesData, isLoading: articleLoading, isError: articleLoadingError, isSuccess } = useArticles();
+  const { data: categories, isLoading: categoryLoading, isError: categoryLoadingError, isSuccess: isSuccessCategories } = useCategories();
+  const { data: articlesData, isLoading: articleLoading, isError: articleLoadingError, isSuccess: isSuccessArticles } = useArticles();
 
   const isLoading = categoryLoading || articleLoading;
   const isError = categoryLoadingError || articleLoadingError;
+  const isSuccess = isSuccessCategories && isSuccessArticles;
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
@@ -48,10 +48,9 @@ export const Dashboard: FC = () => {
   return (
     <>
       <Container maxWidth='lg'>
-        {/* {isError && displayError} */}
-
         {categoryLoading && <Progress />}
-        {!categoryLoading && categories && <NavBar categories={categories} onChange={handleCategoryChange} />}
+        {isSuccessCategories && categories && <NavBar categories={categories} onChange={handleCategoryChange} />}
+        {isError && <Error />}
         {isLoading && <Progress />}
         {isSuccess && articlesData && (
           <>
