@@ -5,7 +5,7 @@ import { ArticleCategory } from '../models';
 import { useQuery } from 'react-query';
 import { fetchArticles, fetchCategories } from '../api/calls';
 import { NavBar } from './NavBar';
-import { Pagination, Error, Progress } from './ui';
+import { Pagination, Error, Progress, DisplayCenter, NoArticles } from './ui';
 import { MAX_PAGES } from '../utils/constants';
 import { format, isValid } from 'date-fns';
 
@@ -61,7 +61,11 @@ export const Dashboard: FC = () => {
   return (
     <>
       <Container maxWidth='lg'>
-        {categoryLoading && <Progress />}
+        {categoryLoading && (
+          <DisplayCenter>
+            <Progress />
+          </DisplayCenter>
+        )}
         {isSuccessCategories && categories && (
           <NavBar
             categories={categories}
@@ -72,16 +76,30 @@ export const Dashboard: FC = () => {
             onDateToChange={handleDateToChange}
           />
         )}
-        {isError && <Error />}
-        {isLoading && <Progress />}
+        {isError && (
+          <DisplayCenter>
+            <Error />
+          </DisplayCenter>
+        )}
+        {isLoading && (
+          <DisplayCenter>
+            <Progress />
+          </DisplayCenter>
+        )}
         {isSuccess && articlesData && (
           <>
             <Grid container spacing={3}>
-              {articlesData.results.map((article, index) => (
-                <Grid item key={index} xs={12} sm={6} md={4} lg={3}>
-                  <ArticleTile article={article} />
-                </Grid>
-              ))}
+              {articlesData.results.length > 0 ? (
+                articlesData.results.map((article, index) => (
+                  <Grid item key={index} xs={12} sm={6} md={4} lg={3}>
+                    <ArticleTile article={article} />
+                  </Grid>
+                ))
+              ) : (
+                <DisplayCenter>
+                  <NoArticles />
+                </DisplayCenter>
+              )}
             </Grid>
             <Pagination page={page} count={articlesData.pages > MAX_PAGES ? MAX_PAGES : articlesData.pages} onChange={handlePageChange} />
           </>
