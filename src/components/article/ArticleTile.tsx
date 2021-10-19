@@ -3,6 +3,7 @@ import React from 'react';
 import { Article } from '../../models';
 import { makeStyles } from '@mui/styles';
 import noImg from '../../assets/img/noimg.png';
+import { format, parseISO } from 'date-fns';
 
 const useStyles = makeStyles(() => ({
   twoLines: {
@@ -32,7 +33,7 @@ export const ArticleTile: React.FC<ArticleTileProps> = ({ article }: ArticleTile
         />
         <CardContent sx={{ flex: 1 }}>
           <Typography sx={{ fontSize: 14 }} mb={1} color='secondary'>
-            {new Date(webPublicationDate).toDateString()}
+            {format(parseISO(webPublicationDate.slice(0, 10)), 'eee MM dd yy')}
           </Typography>
           <Box className={classes.twoLines} sx={{ minHeight: 36 }} mb={2}>
             <Typography sx={{ fontSize: 13 }}>{webTitle}</Typography>

@@ -7,15 +7,20 @@ import { fetchArticles, fetchCategories } from '../api/calls';
 import { NavBar } from './NavBar';
 import { Pagination, Error, Progress } from './ui';
 import { MAX_PAGES } from '../utils/constants';
+import { format, isValid } from 'date-fns';
 
 export const Dashboard: FC = () => {
   const [page, setPage] = useState<number>(1);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [dateFrom, setDateFrom] = useState<Date | null>(null);
+  const [dateTo, setDateTo] = useState<Date | null>(null);
 
   const buildQuery = (): string => {
     const p = `page=${page}`;
-    const c = selectedCategory ? `section=${selectedCategory}` : '';
-    return [p, c].join('&');
+    const c = selectedCategory ? `section=${selectedCategory}` : null;
+    const df = dateFrom && isValid(dateFrom) ? `from-date=${format(dateFrom, 'yyyy-MM-dd')}` : null;
+    const dt = dateTo && isValid(dateTo) ? `to-date=${format(dateTo, 'yyyy-MM-dd')}` : null;
+    return [p, c, df, dt].filter(e => e).join('&');
   };
 
   const useArticles = () => {
@@ -30,10 +35,10 @@ export const Dashboard: FC = () => {
   };
 
   const { data: categories, isLoading: categoryLoading, isError: categoryLoadingError, isSuccess: isSuccessCategories } = useCategories();
-  const { data: articlesData, isLoading: articleLoading, isError: articleLoadingError, isSuccess: isSuccessArticles } = useArticles();
+  const { data: articlesData, isLoading: articlesLoading, isError: articlesLoadingError, isSuccess: isSuccessArticles } = useArticles();
 
-  const isLoading = categoryLoading || articleLoading;
-  const isError = categoryLoadingError || articleLoadingError;
+  const isLoading = categoryLoading || articlesLoading;
+  const isError = categoryLoadingError || articlesLoadingError;
   const isSuccess = isSuccessCategories && isSuccessArticles;
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
@@ -45,11 +50,28 @@ export const Dashboard: FC = () => {
     setPage(1);
   };
 
+  const handleDateFromChange = (date: Date | null) => {
+    setDateFrom(date);
+  };
+
+  const handleDateToChange = (date: Date | null) => {
+    setDateTo(date);
+  };
+
   return (
     <>
       <Container maxWidth='lg'>
         {categoryLoading && <Progress />}
-        {isSuccessCategories && categories && <NavBar categories={categories} onChange={handleCategoryChange} />}
+        {isSuccessCategories && categories && (
+          <NavBar
+            categories={categories}
+            dateFrom={dateFrom}
+            dateTo={dateTo}
+            onCategoryChange={handleCategoryChange}
+            onDateFromChange={handleDateFromChange}
+            onDateToChange={handleDateToChange}
+          />
+        )}
         {isError && <Error />}
         {isLoading && <Progress />}
         {isSuccess && articlesData && (
