@@ -2,12 +2,11 @@ import React, { FC, useState } from 'react';
 import { Grid, Container } from '@mui/material';
 import { ArticleTile } from './article';
 import { ArticleCategory } from '../models';
-import { useQuery } from 'react-query';
-import { fetchArticles, fetchCategories } from '../api/calls';
+import { useArticles, useCategories } from '../api/hooks';
 import { NavBar } from './NavBar';
 import { Pagination, Error, Progress, DisplayCenter, NoArticles } from './ui';
 import { MAX_PAGES } from '../utils/constants';
-import { format, isValid } from 'date-fns';
+import { buildQuery } from '../utils/common';
 
 export const Dashboard: FC = () => {
   const [page, setPage] = useState<number>(1);
@@ -15,27 +14,15 @@ export const Dashboard: FC = () => {
   const [dateFrom, setDateFrom] = useState<Date | null>(null);
   const [dateTo, setDateTo] = useState<Date | null>(null);
 
-  const buildQuery = (): string => {
-    const p = `page=${page}`;
-    const c = selectedCategory ? `section=${selectedCategory}` : null;
-    const df = dateFrom && isValid(dateFrom) ? `from-date=${format(dateFrom, 'yyyy-MM-dd')}` : null;
-    const dt = dateTo && isValid(dateTo) ? `to-date=${format(dateTo, 'yyyy-MM-dd')}` : null;
-    return [p, c, df, dt].filter(e => e).join('&');
-  };
-
-  const useArticles = () => {
-    const query = buildQuery();
-    return useQuery(['articles', query], () => fetchArticles(query), {
-      select: data => data.response,
-    });
-  };
-
-  const useCategories = () => {
-    return useQuery<ArticleCategory[], Error>('categories', fetchCategories);
-  };
+  const query = buildQuery(page, selectedCategory, dateFrom, dateTo);
 
   const { data: categories, isLoading: categoryLoading, isError: categoryLoadingError, isSuccess: isSuccessCategories } = useCategories();
-  const { data: articlesData, isLoading: articlesLoading, isError: articlesLoadingError, isSuccess: isSuccessArticles } = useArticles();
+  const {
+    data: articlesData,
+    isLoading: articlesLoading,
+    isError: articlesLoadingError,
+    isSuccess: isSuccessArticles,
+  } = useArticles(query);
 
   const isLoading = categoryLoading || articlesLoading;
   const isError = categoryLoadingError || articlesLoadingError;

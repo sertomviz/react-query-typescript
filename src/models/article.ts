@@ -1,6 +1,7 @@
 export interface Article {
   webTitle: string;
   webPublicationDate: string;
+  sectionId: string;
   fields: {
     thumbnail: string;
     trailText: string;
@@ -9,15 +10,16 @@ export interface Article {
 }
 
 export interface ArticleResponse {
-  response: {
-    status: string;
-    total: number;
-    startIndex: number;
-    pageSize: number;
-    currentPage: number;
-    pages: number;
-    results: Article[];
-  };
+  status: string;
+  total: number;
+  startIndex: number;
+  pageSize: number;
+  currentPage: number;
+  pages: number;
+  results: Article[];
+}
+export interface ArticleGenericResponse {
+  response: ArticleResponse;
 }
 export interface ArticleCategory {
   id: string;

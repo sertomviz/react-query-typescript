@@ -1,14 +1,14 @@
 import axios from 'axios';
 import config from '../config/config';
-import { ArticleResponse, ArticleCategoryResponse, ArticleCategory } from '../models';
+import { ArticleGenericResponse, ArticleCategoryResponse, ArticleCategory } from '../models';
 import { PAGE_SIZE } from '../utils/constants';
 
 const baseURL = config.apiURL;
 const apiKey = config.apiKey;
 
-export const fetchArticles = async (query: string): Promise<ArticleResponse> => {
+export const fetchArticles = async (query: string): Promise<ArticleGenericResponse> => {
   const url = `${baseURL}/search?${query}&show-fields=thumbnail,trailText&page-size=${PAGE_SIZE}&api-key=${apiKey}`;
-  const res = await axios.get<ArticleResponse>(url);
+  const res = await axios.get<ArticleGenericResponse>(url);
   return res.data;
 };
 

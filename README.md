@@ -9,17 +9,16 @@ $ yarn install
 ## Start
 
 ```bash
-# Create env.local file and copy the contents of env.example
 $ yarn start
 ```
 
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-This project was created with the following libraies
+## Run Tests
 
-- react-query
+```bash
+$ yarn test
+```
 
-- material-ui
-
-- axios
+This project makes use of the following packages: react, react-query, material-ui, axios, jest, react-testing-library
